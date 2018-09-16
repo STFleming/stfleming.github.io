@@ -9,8 +9,10 @@ redirect_from:
 
 I hope to contribute to our understanding of how we can  map abstract high-level descriptions of algorithms into efficient custom hardware. To date my research has led me to develop tools that aim to make high-level synthesis of FPGA digital circuits easier, faster, and more reliable.
 
-High-Level systems integration
+PushPush
 =====
+Currently I am working on developing PushPush, a tool that makes linking hardware functions and software functions as easy as linking software objects together.
+We have developed a higher-order system-level type system that enables functions to be passed as parameters between functions executing in both hardware and software. This enables some novel designs to be efficiently constructed. For example, systems where the `main()` function is specified in hardware not software, or giving functions executing in hardware the ability to make software based OS system calls such as `printf()`. 
 
 
 Getting started
