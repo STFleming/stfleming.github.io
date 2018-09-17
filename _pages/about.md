@@ -11,39 +11,27 @@ I hope to contribute to our understanding of how we can  map abstract high-level
 
 PushPush
 =====
-Currently I am working on developing PushPush, a tool that makes linking hardware functions and software functions as easy as linking software objects together.
-We have developed a higher-order system-level type system that enables functions to be passed as parameters between functions executing in both hardware and software. This enables some novel designs to be efficiently constructed. For example, systems where the `main()` function is specified in hardware not software, or giving functions executing in hardware the ability to make software based OS system calls such as `printf()`. 
+Currently I am working on developing PushPush, a tool that makes linking hardware and software functions as easy as linking software objects together.
+We have developed a higher-order system-level type system that enables functions to be passed as parameters between functions executing in both hardware and software. This enables some novel designs to be efficiently constructed.
+For example: systems where the `main()` function is specified in hardware not software, or giving functions executing in hardware the ability to make software based OS system calls such as `printf()`. 
 
+Reliable FPGA Computation
+===========================
+FPGA-based applications working in extreme environments, such as satellites in low-earth orbit, or safety critical applications, such as autonmous vehicles, need to be designed in such a way that they are resillient to errors.
+However in general, off-the-shelf FPGA devices are highly sensitive to errors in their configuration memory, with bit-flips causing unwanted reconfigurations.
+My research in this area focusses on a few things:
+* __[Automatic protection]__: Protecting FPGA designs is a tedious and error-prone task. My aim is to build tools that automatically provide circuit protection (at a higher-abstraction level) than current tools.
+* __[Selective protection]__: By statically analysing high-level descriptions of applications, such as an input to a high-level synthesis tool, it is easier for us to extract the _"important portions"_ of the application compared to at a lower abstraction level, such as the hardware description. Using this information we can then automatically protect only the identified portions, reducing the expensive area and power overheads that typically inflict protection strategies. 
+* __[Testing time]__: Testing complex FPGA circuits against faults is a lengthy time consuming process. I have worked on tools and infrastructure to accelerate this process, improving test converage and testing times.
 
-Getting started
-======
-1. Register a GitHub account if you don't have one and confirm your e-mail (required!)
-1. Fork [this repository](https://github.com/academicpages/academicpages.github.io) by clicking the "fork" button in the top right. 
-1. Go to the repository's settings (rightmost item in the tabs that start with "Code", should be below "Unwatch"). Rename the repository "[your GitHub username].github.io", which will also be your website's URL.
-1. Set site-wide configuration and create content & metadata (see below -- also see [this set of diffs](http://archive.is/3TPas) showing what files were changed to set up [an example site](https://getorg-testacct.github.io) for a user with the username "getorg-testacct")
-1. Upload any files (like PDFs, .zip files, etc.) to the files/ directory. They will appear at https://[your GitHub username].github.io/files/example.pdf.  
-1. Check status by going to the repository settings, in the "GitHub pages" section
+Working in this area has also lead to me becoming an experimenter of the European Space Agency OPS-SAT project, an experimental research platform being sent into low-earth orbit. My work will investigate the resilliency of modern commercial reconfigurable SoC devices in the harsh environment of space. FPGA circuits constructed via my tools will be executing on the on-board commercial FPGA reconfigurable SoC devices during flight. 
 
-Site-wide configuration
-------
-The main configuration file for the site is in the base directory in [_config.yml](https://github.com/academicpages/academicpages.github.io/blob/master/_config.yml), which defines the content in the sidebars and other site-wide features. You will need to replace the default variables with ones about yourself and your site's github repository. The configuration file for the top menu is in [_data/navigation.yml](https://github.com/academicpages/academicpages.github.io/blob/master/_data/navigation.yml). For example, if you don't have a portfolio or blog posts, you can remove those items from that navigation.yml file to remove them from the header. 
-
-Create content & metadata
-------
-For site content, there is one markdown file for each type of content, which are stored in directories like _publications, _talks, _posts, _teaching, or _pages. For example, each talk is a markdown file in the [_talks directory](https://github.com/academicpages/academicpages.github.io/tree/master/_talks). At the top of each markdown file is structured data in YAML about the talk, which the theme will parse to do lots of cool stuff. The same structured data about a talk is used to generate the list of talks on the [Talks page](https://academicpages.github.io/talks), each [individual page](https://academicpages.github.io/talks/2012-03-01-talk-1) for specific talks, the talks section for the [CV page](https://academicpages.github.io/cv), and the [map of places you've given a talk](https://academicpages.github.io/talkmap.html) (if you run this [python file](https://github.com/academicpages/academicpages.github.io/blob/master/talkmap.py) or [Jupyter notebook](https://github.com/academicpages/academicpages.github.io/blob/master/talkmap.ipynb), which creates the HTML for the map based on the contents of the _talks directory).
-
-**Markdown generator**
-
-I have also created [a set of Jupyter notebooks](https://github.com/academicpages/academicpages.github.io/tree/master/markdown_generator
-) that converts a CSV containing structured data about talks or presentations into individual markdown files that will be properly formatted for the academicpages template. The sample CSVs in that directory are the ones I used to create my own personal website at stuartgeiger.com. My usual workflow is that I keep a spreadsheet of my publications and talks, then run the code in these notebooks to generate the markdown files, then commit and push them to the GitHub repository.
-
-How to edit your site's GitHub repository
-------
-Many people use a git client to create files on their local computer and then push them to GitHub's servers. If you are not familiar with git, you can directly edit these configuration and markdown files directly in the github.com interface. Navigate to a file (like [this one](https://github.com/academicpages/academicpages.github.io/blob/master/_talks/2012-03-01-talk-1.md) and click the pencil icon in the top right of the content preview (to the right of the "Raw | Blame | History" buttons). You can delete a file by clicking the trashcan icon to the right of the pencil icon. You can also create new files or upload files by navigating to a directory and clicking the "Create new file" or "Upload files" buttons. 
-
-Example: editing a markdown file for a talk
-![Editing a markdown file for a talk](/images/editing-talk.png)
-
-For more info
-------
-More info about configuring academicpages can be found in [the guide](https://academicpages.github.io/markdown/). The [guides for the Minimal Mistakes theme](https://mmistakes.github.io/minimal-mistakes/docs/configuration/) (which this theme was forked from) might also be helpful.
+Helper Circuits for High-Level Synthesis
+=========================================
+High-level synthesis optimisations often require a static analysis of the input so that they can determine runtime behaviours, such as memory access patterns or loop dependencies, they can then use this information to generate more efficient circuits.
+However, for dynamic applications, such as those which walk dynamic data structures, static analysis-based approaches often fall flat. 
+I am interested in addressing this gap by developing tools that can construct _helper circuits_ that execute along side the main circuit in a support role. These helper circuits are built using application specific knowledge extracted from the semantics of the input source and are included in the generated hardware.
+Research in this direction has led me to develop helper circuit-based high-level synthesis optimisations that can:
+* __[protect control-flow]__ by detecting any incorrect branch the exact cycle it occurs
+* __[prefetch data]__ by running ahead of the main circuit, fetching the data it requires, and storing it locally just before it is needed.  
+* __[predict dynamic schedules]__ by running ahead and constantly updating a dynamically improving worst-case execution time upper-bound for high-level synthesis generated applications. 
