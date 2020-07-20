@@ -12,8 +12,8 @@ I was honoured to co-lecture a first-year UG course alongside the brilliant Bob 
 
 ### Preventing User Errors 
 The slides in this deck have interactable calculators illustrating how bad design can increase the likelyhood of errors.
-![Preventing user errors](https://stfleming.github.io/icl-eie1-ucis-preventing-user-error/)
+[Preventing user errors](https://stfleming.github.io/icl-eie1-ucis-preventing-user-error/)
 
 ### Design thinking lecture
-![Design Thinking Lecture](https://stfleming.github.io/icl-eie1-ucis-design-thinking/)
+[Design Thinking Lecture](https://stfleming.github.io/icl-eie1-ucis-design-thinking/)
 
