@@ -10,7 +10,7 @@ locale                   : "en-US"
 title                    : " STF / researcher"
 title_separator          : "-"
 name                     : &name "Dr Shane T. Fleming"
-description              : &description "Research Associate"
+description              : &description "Researcher"
 url                      : https://stfleming.github.io # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
 baseurl                  : "" # the subpath of your site, e.g. "/blog"
 repository               : "stfleming/stfleming.github.io"
@@ -81,12 +81,12 @@ analytics:
 # Site Author
 author:
   name             : "Dr Shane T. Fleming"
-  avatar           : "profile_new.png"
-  bio              : "Research Associate"
+  avatar           : "profile.png"
+  bio              : "Researcher"
   #location         : "Imperial College London"
-  location         : "Cambridge Computer Lab"
+  location         : "Microsoft Research Cambridge"
   employer         :
-  googlescholar    : "https://scholar.google.no/citations?user=vS3KZAIAAAAJ&hl=en"
+  googlescholar    : "https://scholar.google.com/citations?user=bGjqBxIAAAAJ&hl=en&authuser=1"
   email            : 
   uri              :
   bitbucket        :
