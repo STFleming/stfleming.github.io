@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+.links line {
+  stroke: #999;
+  stroke-opacity: 0.6;
+}
+
+.nodes circle {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+text {
+  font-family: sans-serif;
+  font-size: 10px;
+}
+
+</style>
+<svg width="600" height="600"></svg>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script>
+
+
+// graph.json
+var graph_json = "./simple_graph.json";
+
+var visited_colour = "#bfef45";
+var active_colour = "#f58231";
+var unvisited_colour = "gainsboro";
+var next_up_colour = "#ffe119";
+
+var node_size = 25;
+var force_strength = -360;
+var link_width = 3;
+
+var start_node_id = 5;
+
+// maze.json
+
+// Use a force layout to plot the graph
+// force directed layout has been adapted from https://bl.ocks.org/heybignick/3faf257bbbbc7743bb72310d03b86ee8
+var svg = d3.select("svg"),
+    width = +svg.attr("width"),
+    height = +svg.attr("height");
+
+var color = d3.scaleOrdinal(d3.schemeCategory20);
+
+var graph_data = [];
+
+var active = [];
+var visited = [];
+var bfs_queue = [];
+var up_next = [];
+
+// NOTE: NONE OF THIS IS OPTIMISED. THE CODE WAS WRITTEN INEFFICIENTLY TO DEMONSTRATE THE BFS ALGORITHM AS I DID NOT HAVE MUCH FREE TIME TO WORK ON IT FOR THE INTERVIEW PRESENTATION :)
+
+// returns true if a node has already been visited
+// doing a linear walk over a visited list every node consideration is ridiculous but I'm in a hurry
+function hasVisited(node_id) {
+	for(var v in visited){
+		if(node_id == visited[v])
+			return true;
+	}
+	return false;
+}
+
+// when provided with a node returns all the nodes connected to it
+function neighbours(node_id) {
+	n = []; // the list of neighbours of node_id
+	for(var l in graph_data.links) {
+		if(graph_data.links[l].source.id == node_id) {
+			n.push(graph_data.links[l].target.id);
+		}
+		if(graph_data.links[l].target.id == node_id) {
+			n.push(graph_data.links[l].source.id);
+		}
+	}
+	return n;
+}
+
+
+// reset the BFS
+function resetBFS() {
+	for(var node in graph_data.nodes) {
+		d3.select("#node_" + graph_data.nodes[node].id).style("fill", unvisited_colour);  
+	}
+	visited = [];
+	up_next = [];
+}
+
+// enque a node for processing in the next BFS step
+function enqueBFS(node_id) {
+
+}
+
+// deque a node for processing in the next BFS step
+function deque() {
+
+}
+
+// highlights all unvisited neighbours
+function highlightNextUp(node_id) {
+	var possible = neighbours(node_id);
+	for(var i in possible) {
+		if(!hasVisited(possible[i])) {
+			d3.select("#node_"+possible[i]).style("fill", next_up_colour); 	
+			up_next.push(possible[i]);
+		}
+	}
+}
+
+// step the BFS forward one position
+function stepBFS() {
+    var curr_timestep = up_next;
+    up_next = [];
+
+    for(var a in active) {
+        visited.push(active[a]);
+        d3.select("#node_"+active[a]).style("fill", visited_colour);
+
+    }
+    active = [];
+
+    for(var i in curr_timestep) {
+        active.push(curr_timestep[i]);
+        d3.select("#node_"+curr_timestep[i]).style("fill", active_colour);
+        highlightNextUp(curr_timestep[i]);
+    }
+}
+
+// initialise the BFS
+function initBFS() {
+	resetBFS();
+	d3.select("#node_"+start_node_id).style("fill", active_colour);
+	active.push(start_node_id);
+	highlightNextUp(start_node_id);
+}
+
+// Adds a button that when triggered executes func()
+function addButton(x, y, text_in, func) {
+   var button_width = 80;
+   var button_height = 30;
+
+  var button_text = svg.append("text")
+      .attr("x", x + button_width/4 - text_in.length + 5)
+      .attr("y", y + button_height/2 + 4)
+      .style("font-family", "serif")
+      .style("font-size", 18)
+      .text(text_in);
+
+   var button = svg.append("rect")
+      .attr("x", x)
+      .attr("y", y)
+      .attr("height", button_height)
+      .attr("width", button_width)
+      .style("fill", "white")
+      .style("stroke-width", 2)
+      .style("stroke", "black")
+      .style("opacity", 0.3)
+      .on("mouseover", function() { d3.select(this).style("fill", next_up_colour); d3.select(this).style("opacity", 0.3); })
+      .on("mouseout",  function() { d3.select(this).style("fill", "white"); })
+      .on("click", func);
+
+}
+
+// Adds a label to the diagram
+function addLabel(x, y, text_in) {
+	svg.append("text")
+	   .attr("x", x)
+	   .attr("y", y)
+           .style("font-family", "serif")
+           .style("font-size", 22)
+           .style("text-decoration", "underline")
+	   .text(text_in);
+}
+
+d3.json(graph_json, function(error, graph) {
+  if (error) throw error;
+  
+  graph_data = graph;
+
+  var simulation = d3.forceSimulation(graph.nodes)
+    .force("link", d3.forceLink().id(function(d) { return d.id; }))
+    .force("charge", d3.forceManyBody().strength(force_strength))
+    .force("center", d3.forceCenter(width / 2, height / 2))
+		.stop();
+  
+  simulation.force("link")
+      .links(graph.links);
+  
+  for (var i = 0; i < 300; ++i) simulation.tick();
+
+  var link = svg.append("g")
+      .attr("class", "links")
+      .selectAll("line")
+      .data(graph.links)
+      .enter().append("line")
+      .attr("x1", function(d) { return d.source.x; })
+      .attr("y1", function(d) { return d.source.y; })
+      .attr("x2", function(d) { return d.target.x; })
+      .attr("y2", function(d) { return d.target.y; })
+      .attr("stroke-width", link_width);
+
+  var node = svg.append("g")
+      .attr("class", "nodes")
+      .selectAll("circle")
+      .data(graph.nodes)
+      .enter().append("circle")
+      .attr("id", function(d) { return "node_" + d.id; })
+      .attr("cx", function(d) { return d.x; })
+      .attr("cy", function(d) { return d.y; })
+      .attr("r", node_size)
+      .on("click", function(d) { start_node_id = d.id; initBFS(); })
+      .style("stroke", "black")
+      .style("stroke-width", 2)
+      .style("fill", unvisited_colour );
+
+   var labels = svg.append("g")
+      .attr("class", "labels")
+      .selectAll("#node_label")
+      .data(graph.nodes)
+      .enter().append("text")
+      .attr("id", "node_label")
+      .attr("x", function(d) { return d.x - 7; })
+      .attr("y", function(d) { return d.y + 3; })
+      .style("font-family", "serif")
+      .style("font-size", 18)
+      .text(function(d) {return d.id; } );
+
+
+   initBFS();
+
+   // control buttons
+   addLabel(50,35,"Controls");
+   addButton(150, 15, "step()", stepBFS); 
+   addButton(250, 15, "reset()", resetBFS); 
+
+});
+
+
+</script>
+
