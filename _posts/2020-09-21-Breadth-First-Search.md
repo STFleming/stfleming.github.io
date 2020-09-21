@@ -13,6 +13,6 @@ This post explains the breadth first search algorithm. It is an interactive exam
 Layer-by-layer
 ======
 
-<iframe src="http://stfleming.github.io/files/blog_d3/bfs_2020/bfs/index.html" marginwidth="0" marginheight="0" scrolling="no" width="600" height="600"></iframe>
+<iframe src="http://stfleming.github.io/files/blog_d3/bfs_2020/title_slide/index.html" marginwidth="0" marginheight="0" scrolling="no" width="600" height="600"></iframe>
 
 
