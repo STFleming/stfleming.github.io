@@ -643,8 +643,8 @@ function addButton(id, x, y, text_in, func) {
 
 }
 
-var maze_x = 100;
-var maze_y = 100;
+var maze_x = 10;
+var maze_y = 10;
 
 var maze_n = 40;
 
@@ -727,11 +727,11 @@ d3.json(graph_json, function(error, graph) {
 
    initBFS();
 
-   addTitle(250, 85, "Breadth First Search");
+   //addTitle(250, 85, "Breadth First Search");
 
    // control buttons
    var cntrl_x = 175;
-   var cntrl_y = 700;
+   var cntrl_y = 610;
    addLabel(cntrl_x,cntrl_y,"Controls");
    addButton("cntrl_play", cntrl_x + 100, cntrl_y - 20, "play()", playback); 
    //addButton("cntrl_reset", cntrl_x + 200, cntrl_y - 20, "reset()", resetBFS); 
