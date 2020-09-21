@@ -643,7 +643,7 @@ function addButton(id, x, y, text_in, func) {
 
 }
 
-var maze_x = 10;
+var maze_x = 200;
 var maze_y = 10;
 
 var maze_n = 40;
@@ -730,7 +730,7 @@ d3.json(graph_json, function(error, graph) {
    //addTitle(250, 85, "Breadth First Search");
 
    // control buttons
-   var cntrl_x = 175;
+   var cntrl_x = 375;
    var cntrl_y = 610;
    addLabel(cntrl_x,cntrl_y,"Controls");
    addButton("cntrl_play", cntrl_x + 100, cntrl_y - 20, "play()", playback); 

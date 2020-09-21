@@ -261,7 +261,7 @@ function drawKey(x,y) {
 	addNote(x+25,y+135, "- an unvisited node");
 }
 
-var tree_y_base = 200;
+var tree_y_base = 100;
 var level_dist = 100;
 
 d3.json(graph_json, function(error, graph) {
@@ -292,7 +292,7 @@ d3.json(graph_json, function(error, graph) {
    addButton(250, 15, "reset()", resetBFS); 
 
 
-   drawKey(700,35);
+   drawKey(750,35);
 });
 
 //d3.json(graph_json, function(error, graph) {
