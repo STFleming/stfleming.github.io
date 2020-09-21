@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+.links line {
+  stroke: #999;
+  stroke-opacity: 0.6;
+}
+
+.nodes circle {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+text {
+  font-family: sans-serif;
+  font-size: 10px;
+}
+
+</style>
+<svg width="960" height="600"></svg>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script>
+
+
+var visited_colour = "#bfef45";
+var unvisited_colour = "gainsboro";
+var queued_colour = "#ffe119";
+var active_colour = "#f58231";
+
+var node_size = 25;
+var force_strength = -360;
+var link_width = 3;
+
+var start_node_id = undefined;
+
+// maze.json
+
+// Use a force layout to plot the graph
+// force directed layout has been adapted from https://bl.ocks.org/heybignick/3faf257bbbbc7743bb72310d03b86ee8
+var svg = d3.select("svg"),
+    width = +svg.attr("width"),
+    height = +svg.attr("height");
+
+var color = d3.scaleOrdinal(d3.schemeCategory20);
+
+var graph_data = [];
+
+var visited = [];
+var bfs_queue = [];
+var up_next = [];
+
+// NOTE: NONE OF THIS IS OPTIMISED. THE CODE WAS WRITTEN QUICKLY TO DEMONSTRATE THE BFS ALGORITHM AS I DID NOT HAVE MUCH FREE TIME TO WORK ON IT FOR THE INTERVIEW PRESENTATION :)
+
+// Adds a label to the diagram
+function addLabel(x, y, text_in) {
+	svg.append("text")
+	   .attr("x", x)
+	   .attr("y", y)
+           .style("font-family", "serif")
+           .style("font-size", 22)
+           .style("text-decoration", "underline")
+	   .text(text_in);
+}
+
+// Adds a label to the diagram
+function addTitle(x, y, text_in) {
+        svg.append("text")
+           .attr("x", x)
+           .attr("y", y)
+           .style("font-family", "serif")
+           .style("font-size", 32)
+           .style("text-decoration", "underline")
+           .text(text_in);
+}
+
+// Add arrow
+function addArrow(x1, y1, x2, y2, name){
+
+  var arrowPoints = [[0, 0], [0, 20], [20, 10]];
+
+  svg
+    .append('defs')
+    .append('marker')
+    .attr('id', 'arrow')
+    .attr('viewBox', [0, 0, 20, 20])
+    .attr('refX', 10)
+    .attr('refY', 10)
+    .attr('markerWidth', 20)
+    .attr('markerHeight', 20)
+    .attr('orient', 'auto-start-reverse')
+    .append('path')
+    .attr('d', d3.line()(arrowPoints))
+    .attr('stroke', 'black');
+
+  svg.append("line")
+      .attr("id", name)
+      .attr("x1", x1)
+      .attr("y1", y1)
+      .attr("x2", x2)
+      .attr("y2", y2)
+      .style("stroke", "black")
+      .attr("marker-end", 'url(#arrow)')
+      .style("stroke-width", 1);
+}
+
+
+// -=-=-=--=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+//         Queue Visualiser and helpers
+// -=-=-=--=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+var queue_x = 250;
+var queue_y = 250;
+var queue_item_w = 30;
+var queue_item_h = 70;
+var queue_item_spacing = 5;
+var vis_queue = [];
+var queue_x_end = 0;
+var q_bbox_margin = 15;
+
+// Bounding box for the queue
+var min_q_size = (queue_item_w)/2;
+var q_width = min_q_size; 
+function drawQBox(){
+    svg.append("rect")
+       .attr("id", "qBoundBox")
+       .attr("x", queue_x - q_bbox_margin/2)
+       .attr("y", queue_y - q_bbox_margin/2)
+       .attr("height", queue_item_h + q_bbox_margin)
+       .attr("width", q_width)
+       .style("fill", "none")
+       .style("stroke-dasharray", ("3","3"))
+       .style("stroke-width", 1)
+       .style("stroke", "grey");
+};
+
+addTitle(275, 220, "FIFO Queue");
+addArrow(100, 285, 230, 285, "inarrow");
+addArrow(250+min_q_size, 285, 600, 285, "outarrow");
+
+function updateQBox(adj_amount){
+    var adjustment = 0;
+    if( (q_width + adj_amount) < min_q_size)
+        adjustment = min_q_size;
+    else 
+        adjustment = q_width + adj_amount;
+
+    d3.select("#qBoundBox").transition().attr("width", adjustment).duration(250);
+    d3.select("#outarrow").transition().attr("x1", adjustment+queue_x - q_bbox_margin/2).duration(250);
+
+
+    q_width = adjustment;
+    
+};
+
+// shuffle along all the items in the queue
+function visShuffleAlong() {
+
+	var x_pos = queue_x;
+	//for(var i in vis_queue) {
+	for (var i = vis_queue.length -1; i>=0; i--) {
+		d3.select("#qBox_"+vis_queue[i])
+		  .transition()
+		  .attr("x", function(d) {
+			  return x_pos + queue_item_w + queue_item_spacing;
+		  })
+		  .duration(250);
+
+		d3.select("#qText_"+vis_queue[i])
+		  .transition()
+		  .attr("x", function(d) { 
+			  return x_pos + queue_item_w + queue_item_spacing + queue_item_w/4;
+		  })
+		  .duration(250);
+
+		x_pos = x_pos + queue_item_w + queue_item_spacing;
+	}
+	queue_x_end = x_pos;
+}
+
+// clear all elements in the vis queue
+function visQClear(){
+	for(var i in vis_queue) {
+		d3.select("#qBox_"+vis_queue[i]).remove();
+		d3.select("#qText_"+vis_queue[i]).remove();
+	}
+	q_width = min_q_size;
+    updateQBox(0);
+}
+
+
+// performs the visualisation of an item being added to the queue
+function visAddItem(node_id){
+
+   visShuffleAlong();
+   updateQBox(queue_item_w + queue_item_spacing);
+
+   // New item appears after a delay to allow the shuffle to happen
+   var delay = (vis_queue.length == 0) ? 0 : 150;
+   setTimeout( function() {
+       svg.append("rect")
+          .attr("id", "qBox_"+node_id)
+          .attr("x", queue_x)
+          .attr("y", queue_y)
+          .attr("height", queue_item_h)
+          .attr("width", queue_item_w)
+          .style("fill", color(node_id))
+          .style("stroke-width", 1)
+          .style("stroke", color(node_id))
+          .style("opacity", 1.0);
+
+       //svg.append("text")
+       //   .attr("id", "qText_"+node_id)
+       //   .attr("x", queue_x + queue_item_w/4)
+       //   .attr("y", queue_y + queue_item_h/2 + 4)
+       //   .style("font-family", "serif")
+       //       .style("opacity", 1.0)
+       //   .style("font-size", 18)
+       //   .text(node_id);
+
+
+   }, delay);
+
+   vis_queue.push(node_id);
+}
+
+// performs the visualisation of an item being removed from the queue
+function visRemoveItem() {
+	d3.select("#qBox_"+ vis_queue[0]).transition().style("opacity", 0.1).duration(250);
+	d3.select("#qText_"+vis_queue[0]).transition().style("opacity", 0.1).duration(250);
+	updateQBox(-1*(queue_item_w + queue_item_spacing));
+	setTimeout( function() {
+		d3.select("#qBox_"+ vis_queue[0]).remove();
+		d3.select("#qText_"+vis_queue[0]).remove();
+		vis_queue.shift();
+	}, 250);
+}
+
+
+// Enque dot (a dot that shows what is being enqued)
+//function dotEnque(node_id) {
+//    // animates a dot moving from node_id on the graph and pushing an item into the queue
+//    var start_x = d3.select("#node_"+node_id).attr("cx");
+//    var start_y = d3.select("#node_"+node_id).attr("cy");
+//
+//    var Tlen = 800;
+//
+//     svg.append("circle")
+//     .attr("id", "enque_dot")
+//     .attr("cx", start_x)
+//     .attr("cy", start_y)
+//     .attr("r", 5)
+//     .style("stroke", "none")
+//     .style("fill", queued_colour)
+//     .transition()
+//     .attr("cx", queue_x + queue_item_w/2)
+//     .attr("cy", queue_y + queue_item_h/2)
+//     .duration(Tlen);
+//
+//     setTimeout( function() {
+//        visAddItem(node_id);
+//         setTimeout( function() { d3.select("#enque_dot").remove(); }, 150);
+//     }, Tlen - 250);
+//
+//}
+
+// Deque dot (a dot that shows what is being dequed)
+//function dotDeque(node_id) {
+//    // animates a dot moving from node_id on the graph and pushing an item into the queue
+//    var end_x = d3.select("#node_"+node_id).attr("cx");
+//    var end_y = d3.select("#node_"+node_id).attr("cy");
+//    var Tlen = 800;
+//
+//     svg.append("circle")
+//     .attr("id", "deque_dot")
+//     .attr("cx", queue_x_end)
+//     .attr("cy", queue_y + queue_item_h/2)
+//     .attr("r", 5)
+//     .style("stroke", "none")
+//     .style("fill", active_colour)
+//     .transition()
+//     .attr("cx", end_x)
+//     .attr("cy", end_y)
+//     .duration(Tlen);
+//
+//     setTimeout( function() {
+//	    nodeColour(node_id, active_colour); 
+//	    nodeHighlight(node_id);
+//        setTimeout( function() { d3.select("#deque_dot").remove(); }, 250);
+//     }, Tlen);
+//
+//}
+
+
+function Queue() {
+	this.elements = [];
+};
+
+// enque
+Queue.prototype.enque = function (e) {
+	this.elements.push(e);
+	visAddItem(e);
+};
+
+// peek
+Queue.prototype.peek = function () {
+	return !this.isEmpty() ? this.elements[0] : undefined;
+}
+
+// deque
+Queue.prototype.deque = function() {
+	visRemoveItem();
+	return this.elements.shift();
+};
+
+// isEmpty
+Queue.prototype.isEmpty = function() {
+	return this.elements.length == 0;
+};
+
+// length
+Queue.prototype.length = function() {
+	return this.elements.length;
+}
+
+let node_queue = new Queue();
+
+// The Queue
+drawQBox();
+
+var total_depth = 0;
+var incre = 0;
+
+function pushQ() {
+	if(total_depth < 7) {
+	    total_depth++;
+	    incre++;
+	    svg.append("rect")
+	       .attr("id", "pushitem")
+	       .attr("x",0) 
+	       .attr("y",250)
+	       .attr("width", 30)
+	       .attr("height", 70)
+	       .style("fill", color(incre))
+	       .style("stroke", color(incre))
+	       .transition()
+	       .attr("x", 250)
+	       .duration(750)
+	       .delay(250);
+
+	    setTimeout(function() {
+	    	node_queue.enque(incre);
+	    	d3.select("#pushitem").remove();
+	    }, 750);
+	}
+
+}
+
+function popQ() {
+
+	var color_id = node_queue.deque(); 
+	total_depth = total_depth - 1;
+
+	svg.append("rect")
+	   .attr("id", "popitem")
+	   .attr("x",q_width+queue_x) 
+	   .attr("y",250)
+	   .attr("width", 30)
+	   .attr("height", 70)
+	   .style("fill", color(color_id))
+	   .style("stroke", color(color_id))
+	   .transition()
+	   .attr("x", 750)
+	   .duration(1000);
+
+	setTimeout(function() {
+		d3.select("#popitem").remove();
+	}, 1000);
+
+}
+
+// Adds a button that when triggered executes func()
+function addButton(id, x, y, text_in, func) {
+   var button_width = 120;
+   var button_height = 30;
+
+  var button_text = svg.append("text")
+      .attr("x", x + button_width/4 - text_in.length + 5)
+      .attr("y", y + button_height/2 + 4)
+      .style("font-family", "serif")
+      .style("font-size", 18)
+      .text(text_in);
+
+   var button = svg.append("rect")
+      .attr("id", id)
+      .attr("x", x)
+      .attr("y", y)
+      .attr("height", button_height)
+      .attr("width", button_width)
+      .style("fill", "white")
+      .style("stroke-width", 2)
+      .style("stroke", "black")
+      .style("opacity", 0.3)
+        .on("mouseover", function() { d3.select(this).style("fill", queued_colour); d3.select(this).style("opacity", 0.3);} )
+      .on("mouseout",  function() { d3.select(this).style("fill", "white"); })
+      .on("click", function() { func();});
+
+}
+
+addButton("enque_but", 160, 350, "enqueue()", pushQ);
+addButton("deque_but", 440, 350, "dequeue()", popQ);
+
+//setTimeout( function() {
+//   setInterval ( function() {
+//   		total_depth++;
+//   		incre++;
+//	   	pushQ();
+//   }, 1000);
+//}, 500);
+//
+//setInterval ( function() {
+//	if(total_depth >= 7) {
+//	  popQ();
+//	  total_depth--;
+//	}
+//}, 1000);
+
+</script>
+

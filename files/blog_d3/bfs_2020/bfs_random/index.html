@@ -18,24 +18,24 @@ text {
 }
 
 </style>
-<svg width="960" height="600"></svg>
+<svg width="1200" height="800"></svg>
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script>
 
 
 // graph.json
-var graph_json = "simple_graph.json";
+var graph_json = "random_graph.json";
 
-var visited_colour = "#bfef45";
-var active_colour = "#f58231";
+var visited_colour = "orange";
 var unvisited_colour = "gainsboro";
-var next_up_colour = "#ffe119";
+var next_up_colour = "green";
 
-var node_size = 25;
-var force_strength = -360;
-var link_width = 3;
+var node_size = 2;
+var force_strength = -20;
+var force_iterations = 200;
+var link_width = 0.3;
 
-var start_node_id = 5;
+var start_node_id = 0;
 
 // maze.json
 
@@ -49,7 +49,6 @@ var color = d3.scaleOrdinal(d3.schemeCategory20);
 
 var graph_data = [];
 
-var active = [];
 var visited = [];
 var bfs_queue = [];
 var up_next = [];
@@ -84,7 +83,7 @@ function neighbours(node_id) {
 // reset the BFS
 function resetBFS() {
 	for(var node in graph_data.nodes) {
-		d3.select("#node_" + graph_data.nodes[node].id).style("fill", unvisited_colour);  
+		d3.select("#node_" + graph_data.nodes[node].id). style("fill", unvisited_colour);  
 	}
 	visited = [];
 	up_next = [];
@@ -113,28 +112,20 @@ function highlightNextUp(node_id) {
 
 // step the BFS forward one position
 function stepBFS() {
-    var curr_timestep = up_next;
-    up_next = [];
-
-    for(var a in active) {
-        visited.push(active[a]);
-        d3.select("#node_"+active[a]).style("fill", visited_colour);
-
-    }
-    active = [];
-
-    for(var i in curr_timestep) {
-        active.push(curr_timestep[i]);
-        d3.select("#node_"+curr_timestep[i]).style("fill", active_colour);
-        highlightNextUp(curr_timestep[i]);
-    }
+	var curr_timestep = up_next;
+	up_next = [];
+	for(var i in curr_timestep) {
+		visited.push(curr_timestep[i]);
+		d3.select("#node_"+curr_timestep[i]).style("fill", visited_colour);
+		highlightNextUp(curr_timestep[i]);
+	}
 }
 
 // initialise the BFS
 function initBFS() {
 	resetBFS();
-	d3.select("#node_"+start_node_id).style("fill", active_colour);
-	active.push(start_node_id);
+	d3.select("#node_"+start_node_id).style("fill", visited_colour);
+	visited.push(start_node_id);
 	highlightNextUp(start_node_id);
 }
 
@@ -185,12 +176,13 @@ d3.json(graph_json, function(error, graph) {
     .force("link", d3.forceLink().id(function(d) { return d.id; }))
     .force("charge", d3.forceManyBody().strength(force_strength))
     .force("center", d3.forceCenter(width / 2, height / 2))
-		.stop();
+                .stop();
+
   
   simulation.force("link")
       .links(graph.links);
   
-  for (var i = 0; i < 300; ++i) simulation.tick();
+  for (var i = 0; i < force_iterations; ++i) simulation.tick();
 
   var link = svg.append("g")
       .attr("class", "links")
@@ -214,21 +206,18 @@ d3.json(graph_json, function(error, graph) {
       .attr("r", node_size)
       .on("click", function(d) { start_node_id = d.id; initBFS(); })
       .style("stroke", "black")
-      .style("stroke-width", 2)
+      .style("stroke-width", 0)
       .style("fill", unvisited_colour );
 
-   var labels = svg.append("g")
-      .attr("class", "labels")
-      .selectAll("#node_label")
-      .data(graph.nodes)
-      .enter().append("text")
-      .attr("id", "node_label")
-      .attr("x", function(d) { return d.x - 7; })
-      .attr("y", function(d) { return d.y + 3; })
-      .style("font-family", "serif")
-      .style("font-size", 18)
-      .text(function(d) {return d.id; } );
-
+  //var labels = svg.append("g")
+  //    .attr("class", "labels")
+  //    .selectAll("#node_label")
+  //    .data(graph.nodes)
+  //    .enter().append("text")
+  //    .attr("id", "node_label")
+  //    .attr("x", function(d) { return d.x - 10; })
+  //    .attr("y", function(d) { return d.y - 5; })
+  //    .text(function(d) {return d.id; } );
 
    initBFS();
 

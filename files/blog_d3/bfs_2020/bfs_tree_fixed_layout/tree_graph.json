@@ -1,0 +1,305 @@
+{
+  "nodes": [
+    {
+      "id": 1,
+      "name": "node1",
+      "level": 0,
+      "x": 500
+    },
+    {
+      "id": 2,
+      "name": "node2",
+      "level": 1,
+      "x": 300
+    },
+    {
+      "id": 3,
+      "name": "node3",
+      "level": 1,
+      "x": 700 
+    },
+
+    {
+      "id": 4,
+      "name": "node4",
+      "level": 2,
+      "x": 200 
+    },
+    {
+      "id": 5,
+      "name": "node5",
+      "level": 2,
+      "x": 300
+    },
+    {
+      "id": 6,
+      "name": "node6",
+      "level": 2,
+      "x": 400
+    },
+    
+    {
+      "id": 7,
+      "name": "node7",
+      "level": 2,
+      "x": 600 
+    },
+    {
+      "id": 8,
+      "name": "node8",
+      "level": 2,
+      "x": 700
+    },
+    {
+      "id": 9,
+      "name": "node9",
+      "level": 2,
+      "x": 800 
+    },
+
+    {
+      "id": 10,
+      "name": "node10",
+      "level": 3,
+      "x": 175 
+    },
+    {
+      "id": 11,
+      "name": "node11",
+      "level": 3,
+      "x": 200 
+    },
+    {
+      "id": 12,
+      "name": "node12",
+      "level": 3,
+      "x": 225 
+    },
+
+    {
+      "id": 13,
+      "name": "node13",
+      "level": 3,
+      "x": 275 
+    },
+    {
+      "id": 14,
+      "name": "node14",
+      "level": 3,
+      "x": 300 
+    },
+    {
+      "id": 15,
+      "name": "node15",
+      "level": 3,
+      "x": 325 
+    }, 
+
+
+    {
+      "id": 16,
+      "name": "node16",
+      "level": 3,
+      "x": 375 
+    },
+    {
+      "id": 17,
+      "name": "node17",
+      "level": 3,
+      "x": 400 
+    },
+    {
+      "id": 18,
+      "name": "node18",
+      "level": 3,
+      "x": 425 
+    },
+
+
+    {
+      "id": 19,
+      "name": "node19",
+      "level": 3,
+      "x": 575 
+    },
+    {
+      "id": 20,
+      "name": "node20",
+      "level": 3,
+      "x": 600 
+    },
+    {
+      "id": 21,
+      "name": "node21",
+      "level": 3,
+      "x": 625 
+    },
+
+
+    {
+      "id": 22,
+      "name": "node22",
+      "level": 3,
+      "x": 675 
+    },
+    {
+      "id": 23,
+      "name": "node22",
+      "level": 3,
+      "x": 700 
+    },
+    {
+      "id": 24,
+      "name": "node22",
+      "level": 3,
+      "x": 725 
+    },
+
+
+    {
+      "id": 25,
+      "name": "node25",
+      "level": 3,
+      "x": 775 
+    },
+    {
+      "id": 26,
+      "name": "node26",
+      "level": 3,
+      "x": 800 
+    },
+    {
+      "id": 27,
+      "name": "node27",
+      "level": 3,
+      "x": 825 
+    }
+
+
+  ],
+  "links": [
+    {
+      "source": 1,
+      "target": 2
+    },
+    {
+      "source": 1,
+      "target": 3 
+    },
+
+
+
+    {
+      "source": 2,
+      "target": 4 
+    },
+    {
+      "source": 2,
+      "target": 5 
+    },
+    {
+      "source": 2,
+      "target": 6 
+    },
+
+
+
+    {
+      "source": 3,
+      "target": 7 
+    },
+    {
+      "source": 3,
+      "target": 8 
+    },
+    {
+      "source": 3,
+      "target": 9 
+    },
+
+    {
+      "source": 4,
+      "target": 10 
+    },
+    {
+      "source": 4,
+      "target": 11 
+    },
+    {
+      "source": 4,
+      "target": 12 
+    },
+
+
+
+    {
+      "source": 5,
+      "target": 13 
+    },
+    {
+      "source": 5,
+      "target": 14 
+    },
+    {
+      "source": 5,
+      "target": 15 
+    },
+
+
+    {
+      "source": 6,
+      "target": 16 
+    },
+    {
+      "source": 6,
+      "target": 17 
+    },
+    {
+      "source": 6,
+      "target": 18 
+    },
+
+
+    {
+      "source": 7,
+      "target": 19 
+    },
+    {
+      "source": 7,
+      "target": 20 
+    },
+    {
+      "source": 7,
+      "target": 21 
+    },
+
+
+    {
+      "source": 8,
+      "target": 22 
+    },
+    {
+      "source": 8,
+      "target": 23 
+    },
+    {
+      "source": 8,
+      "target": 24 
+    },
+
+
+    {
+      "source": 9,
+      "target": 25 
+    },
+    {
+      "source": 9,
+      "target": 26 
+    },
+    {
+      "source": 9,
+      "target": 27 
+    }
+
+  ]
+}
