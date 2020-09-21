@@ -10,9 +10,14 @@ tags:
 
 This post explains the breadth first search algorithm. It is an interactive example that was used as part of my application to a lectureship at Swansea University.
 
-Layer-by-layer
+Maze solving
 ======
 
 <iframe src="https://stfleming.github.io/files/blog_d3/bfs_2020/title_slide/index.html" marginwidth="0" marginheight="0" scrolling="no" width="600" height="630" frameBorder="0"></iframe>
 
+
+Directed graph
+=======
+
+<iframe src="https://stfleming.github.io/files/blog_d3/bfs_2020/bfs_tree_fixed_layout/index.html" marginwidth="0" marginheight="0" scrolling="no" width="800" height="500" frameBorder="0"></iframe>
 
