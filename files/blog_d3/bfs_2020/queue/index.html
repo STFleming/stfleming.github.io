@@ -18,7 +18,7 @@ text {
 }
 
 </style>
-<svg width="960" height="600"></svg>
+<svg width="960" height="300"></svg>
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script>
 
@@ -109,7 +109,7 @@ function addArrow(x1, y1, x2, y2, name){
 //         Queue Visualiser and helpers
 // -=-=-=--=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 var queue_x = 250;
-var queue_y = 250;
+var queue_y = 50;
 var queue_item_w = 30;
 var queue_item_h = 70;
 var queue_item_spacing = 5;
@@ -133,9 +133,8 @@ function drawQBox(){
        .style("stroke", "grey");
 };
 
-addTitle(275, 220, "FIFO Queue");
-addArrow(100, 285, 230, 285, "inarrow");
-addArrow(250+min_q_size, 285, 600, 285, "outarrow");
+addArrow(100, 85, 230, 85, "inarrow");
+addArrow(250+min_q_size, 85, 600, 85, "outarrow");
 
 function updateQBox(adj_amount){
     var adjustment = 0;
@@ -330,27 +329,33 @@ drawQBox();
 var total_depth = 0;
 var incre = 0;
 
+var enqueue_locked = 0;
+
 function pushQ() {
 	if(total_depth < 7) {
-	    total_depth++;
-	    incre++;
-	    svg.append("rect")
-	       .attr("id", "pushitem")
-	       .attr("x",0) 
-	       .attr("y",250)
-	       .attr("width", 30)
-	       .attr("height", 70)
-	       .style("fill", color(incre))
-	       .style("stroke", color(incre))
-	       .transition()
-	       .attr("x", 250)
-	       .duration(750)
-	       .delay(250);
+        if(enqueue_locked == 0) {
+            enqueue_locked = 1; // lock to stop spamming the enqueue button
+	        total_depth++;
+	        incre++;
+	        svg.append("rect")
+	           .attr("id", "pushitem")
+	           .attr("x",0) 
+	           .attr("y",queue_y)
+	           .attr("width", 30)
+	           .attr("height", 70)
+	           .style("fill", color(incre))
+	           .style("stroke", color(incre))
+	           .transition()
+	           .attr("x", 250)
+	           .duration(750)
+	           .delay(250);
 
-	    setTimeout(function() {
-	    	node_queue.enque(incre);
-	    	d3.select("#pushitem").remove();
-	    }, 750);
+	        setTimeout(function() {
+	        	node_queue.enque(incre);
+	        	d3.select("#pushitem").remove();
+	        	enqueue_locked = 0; // clear the lock
+	        }, 750);
+        }
 	}
 
 }
@@ -358,23 +363,26 @@ function pushQ() {
 function popQ() {
 
 	var color_id = node_queue.deque(); 
-	total_depth = total_depth - 1;
+    
+    if(total_depth > 0) {
+	    total_depth = total_depth - 1;
 
-	svg.append("rect")
-	   .attr("id", "popitem")
-	   .attr("x",q_width+queue_x) 
-	   .attr("y",250)
-	   .attr("width", 30)
-	   .attr("height", 70)
-	   .style("fill", color(color_id))
-	   .style("stroke", color(color_id))
-	   .transition()
-	   .attr("x", 750)
-	   .duration(1000);
+	    svg.append("rect")
+	       .attr("id", "popitem")
+	       .attr("x",q_width+queue_x) 
+	       .attr("y",queue_y)
+	       .attr("width", 30)
+	       .attr("height", 70)
+	       .style("fill", color(color_id))
+	       .style("stroke", color(color_id))
+	       .transition()
+	       .attr("x", 750)
+	       .duration(1000);
 
-	setTimeout(function() {
-		d3.select("#popitem").remove();
-	}, 1000);
+	    setTimeout(function() {
+	    	d3.select("#popitem").remove();
+	    }, 1000);
+    }
 
 }
 
@@ -406,8 +414,8 @@ function addButton(id, x, y, text_in, func) {
 
 }
 
-addButton("enque_but", 160, 350, "enqueue()", pushQ);
-addButton("deque_but", 440, 350, "dequeue()", popQ);
+addButton("enque_but", 160, 150, "enqueue()", pushQ);
+addButton("deque_but", 440, 150, "dequeue()", popQ);
 
 //setTimeout( function() {
 //   setInterval ( function() {

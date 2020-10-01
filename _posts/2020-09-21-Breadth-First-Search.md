@@ -24,20 +24,26 @@ Let's play with the tree example below. This tree is a directed graph, meaning t
 
 Now click the `step()` button to move to the next (coarse) step of the algorithm. All the previously active nodes (orange) are now marked as visited (green). And all the upcoming nodes (yellow) are now active. Keep clicking through until you can't go any further. 
 
-
 <iframe src="https://stfleming.github.io/files/blog_d3/bfs_2020/bfs_tree_fixed_layout/index.html" marginwidth="0" marginheight="0" scrolling="no" width="950" height="650" frameBorder="0"></iframe>
 
-<iframe src="https://stfleming.github.io/files/blog_d3/bfs_2020/bfs_small_tree/index.html" marginwidth="0" marginheight="0" scrolling="no" width="950" height="650" frameBorder="0"></iframe>
+BFS not only applies to directed graphs but undirected ones also, as shown in the example below. One thing to notice when playing with this example is that nodes are only visited once during the graph exploration.
 
 <iframe src="https://stfleming.github.io/files/blog_d3/bfs_2020/bfs/index.html" marginwidth="0" marginheight="0" scrolling="no" width="950" height="650" frameBorder="0"></iframe>
 
 layer-by-layer: requires a queue
 =======
 
-<iframe src="https://stfleming.github.io/files/blog_d3/bfs_2020/queue/index.html" marginwidth="0" marginheight="0" scrolling="no" width="950" height="650" frameBorder="0"></iframe>
+Zooming in on the algorithm we use a data structure, known as a queue, to achieve that layer-by-layer approach when traversing the entire graph. Queue data structures are much like a queue in the real world.  If you go to a bank, and it's a bit busy, you would join the end of a _hopefully_ socially distanced queue. When a teller becomes available the person at the front of the queue leaves it, and everyone else shuffles along. 
 
-<iframe src="https://stfleming.github.io/files/blog_d3/bfs_2020/bfs_queue/index.html" marginwidth="0" marginheight="0" scrolling="no" width="950" height="650" frameBorder="0"></iframe>
+<iframe src="http://localhost:4000/files/blog_d3/bfs_2020/queue/index.html" marginwidth="0" marginheight="0" scrolling="no" width="950" height="300" frameBorder="0"></iframe>
 
+We do the same thing in BFS with queue data structures, except instead of people we use it to schedule which nodes we still have to explore in our graph.  When we visit a node, we `enqueue()` all the neighbours of that node we have yet to explore. Once we have finished doing that we then `dequeue()` the node at the front of the queue to find out which node to explore next. 
+
+Below we can see the queue in action on the previously shown undirected graph. 
+
+<iframe src="http://stfleming.github.io/files/blog_d3/bfs_2020/bfs_queue/index.html" marginwidth="0" marginheight="0" scrolling="no" width="950" height="650" frameBorder="0"></iframe>
+
+Notice that if a node has already been enqueued or already visited fully then we do not enqueue it again. In BFS we only visit each node once.
 
 queues can grow large
 =======
