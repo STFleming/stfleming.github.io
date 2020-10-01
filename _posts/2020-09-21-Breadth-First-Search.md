@@ -35,11 +35,11 @@ layer-by-layer: requires a queue
 
 Zooming in on the algorithm we use a data structure, known as a queue, to achieve that layer-by-layer approach when traversing the entire graph. Queue data structures are much like a queue in the real world.  If you go to a bank, and it's a bit busy, you would join the end of a _hopefully_ socially distanced queue. When a teller becomes available the person at the front of the queue leaves it, and everyone else shuffles along. 
 
-<iframe src="http://localhost:4000/files/blog_d3/bfs_2020/queue/index.html" marginwidth="0" marginheight="0" scrolling="no" width="950" height="300" frameBorder="0"></iframe>
+<iframe src="http://localhost:4000/files/blog_d3/bfs_2020/queue/index.html" marginwidth="0" marginheight="0" scrolling="no" width="950" height="250" frameBorder="0"></iframe>
 
 We do the same thing in BFS with queue data structures, except instead of people we use it to schedule which nodes we still have to explore in our graph.  When we visit a node, we `enqueue()` all the neighbours of that node we have yet to explore. Once we have finished doing that we then `dequeue()` the node at the front of the queue to find out which node to explore next. 
 
-Below we can see the queue in action on the previously shown undirected graph. 
+Below we can see the queue in action on the previously shown undirected graph. Clicking a graph node will set it as the starting node, then `play()` will play through the algorithm, as `step()` will step through it. 
 
 <iframe src="http://stfleming.github.io/files/blog_d3/bfs_2020/bfs_queue/index.html" marginwidth="0" marginheight="0" scrolling="no" width="950" height="650" frameBorder="0"></iframe>
 
@@ -48,11 +48,27 @@ Notice that if a node has already been enqueued or already visited fully then we
 queues can grow large
 =======
 
+This queue data structure is useful for scheduling nodes that we want to visit. However, we should be careful. On the undirected tree graph below, select node 1 as the start node and hit `play()`. What happens to the queue as we get down to the leaves?
+
 <iframe src="https://stfleming.github.io/files/blog_d3/bfs_2020/bfs_queue_tree/index.html" marginwidth="0" marginheight="0" scrolling="no" width="950" height="950" frameBorder="0"></iframe>
+
+The space complexity required for maintaining this queue can become quite large. To illustrate this point further I have two randomly generated graphs below. Each graph has the same number of nodes and edges, however, the topology is different. In Graph A the connections are much more local, as in Graph B edges are less local. 
+
+graph A
+==========
+Select any node and hit `play()` notice how the queue grows.
 
 <iframe src="https://stfleming.github.io/files/blog_d3/bfs_2020/bfs_queue_random_l1/index.html" marginwidth="0" marginheight="0" scrolling="no" width="950" height="950" frameBorder="0"></iframe>
 
+graph B
+=========
+Select any node and hit `play()` notice how the queue grows.
+
 <iframe src="https://stfleming.github.io/files/blog_d3/bfs_2020/bfs_queue_random_l4/index.html" marginwidth="0" marginheight="0" scrolling="no" width="950" height="950" frameBorder="0"></iframe>
+
+Despite having the same number of edges and nodes, the queue size when applying BFS to each graph grows quite differently, with the max queue depth for graph B being far more significant. When using BFS, we need to be careful of the memory requirements, and the topology of the input graph.   
+
+That is BFS; we are exploring a graph in a layer-by-layer fashion, using a queue data structure to schedule upcoming nodes to visit. But what about the maze at the top of this page, how can we use BFS to find the optimal shortest path?
 
 Solving shortest path
 ========
