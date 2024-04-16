@@ -7,32 +7,16 @@ redirect_from:
   - /about.html
 ---
 
-I hope to contribute to our understanding of how we can  map abstract high-level descriptions of algorithms into efficient custom hardware. To date my research has led me to develop tools that aim to make high-level synthesis of FPGA digital circuits easier, faster, and more reliable.
+I am a researcher/educator interested in hardware-software codesign.
+I love building custom digital hardware, compilers/passes for targetting that hardware and thinking about how to make it accessible through better programming models and abstractions.
 
-PushPush
-=====
-Currently I am working on developing PushPush, a tool that makes linking hardware and software functions as easy as linking software objects together.
-We have developed a higher-order system-level type system that enables functions to be passed as parameters between functions executing in both hardware and software. This enables some novel designs to be efficiently constructed.
-For example: systems where the `main()` function is specified in hardware not software, or giving functions executing in hardware the ability to make software based OS system calls such as `printf()`. 
+I have experience in both academica (Imperial/Cambridge/Swansea) and industry (Microsoft Research/AMD Research) building:
+* Frameworks that make it easier to interact with custom ML hardware in AMD devices [Riallto (GitHub)](https://github.com/AMDResearch/Riallto)
+* Frameworks for allowing users to easier interact with custom hardware in FPGA devices [PYNQ (GitHub)](https://github.com/Xilinx/PYNQ)
+* Courses for teaching embedded systems and custom hardware [EmSys (GitHub)](https://github.com/STFleming/EmSys)
+* Distributed FPGA-based SmartNIC key-value store accelerators [Honeycomb (Paper)](https://arxiv.org/abs/2303.14259)
+* Multi-FPGA-based event-triggered high-performance computing systems [POETS (paper)](https://dl.acm.org/doi/full/10.1145/3580372)
+* Compiler passes for generating protected circuits for Space Applications [StitchUP (paper)](https://dl.acm.org/doi/abs/10.1145/2897937.2898097) [StitchUP (GitHub)](https://github.com/STFleming/StitchUp)
+* Higher-order type systems for seamlessly linking hardware and software [PushPush (paper)](https://ieeexplore.ieee.org/abstract/document/7092550)
 
-Reliable FPGA Computation
-===========================
-FPGA-based applications working in extreme environments, such as satellites in low-earth orbit, or safety critical applications, such as autonmous vehicles, need to be designed in such a way that they are resillient to errors.
-However in general, off-the-shelf FPGA devices are highly sensitive to errors in their configuration memory, with bit-flips causing unwanted reconfigurations.
-My research in this area focusses on a few things:
-* __[Automatic protection]__: Protecting FPGA designs is a tedious and error-prone task. My aim is to build tools that automatically provide circuit protection (at a higher-abstraction level) than current tools.
-* __[Selective protection]__: By statically analysing high-level descriptions of applications, such as an input to a high-level synthesis tool, it is easier for us to extract the _"important portions"_ of the application compared to at a lower abstraction level, such as the hardware description. Using this information we can then automatically protect only the identified portions, reducing area and power overheads. 
-* __[Testing time]__: Testing complex FPGA circuits against faults is time consuming. I have worked on tools and infrastructure to accelerate this process, improving test coverage and reducing testing times.
-
-Working in this area has also lead to me becoming an experimenter on the European Space Agency OPS-SAT project, an experimental research nano-satellite being sent into low-earth orbit. My work will investigate the resilliency of modern commercial reconfigurable SoC devices in the harsh environment of space. FPGA circuits constructed via the tools I have developed will be executing on the on-board commercial FPGA reconfigurable SoC devices during flight. 
-
-Helper Circuits for High-Level Synthesis
-=========================================
-High-level synthesis optimisations often require a static analysis of the input so that they can determine runtime behaviours, such as memory access patterns or loop dependencies.
-This information can then be utilised to generate more efficient circuits.
-However, for dynamic applications, such as those which walk dynamic data structures, static analysis-based approaches often fall flat. 
-I am interested in addressing this gap by developing tools that can construct _helper circuits_, which are circuits that execute along side the main circuit in a supportive role. These helper circuits are built using application specific knowledge extracted from the semantics of the input source and are included in the generated hardware.
-Research in this direction has led me to develop helper circuit-based high-level synthesis optimisations that can:
-* __[protect control-flow]__ by detecting any incorrect branch the exact clock cycle it occurs.
-* __[prefetch data]__ by running ahead of the main circuit, fetching the data it requires, and storing it locally just before it is needed.  
-* __[predict dynamic schedules]__ by running ahead and constantly updating a dynamically improving worst-case execution time upper-bound for high-level synthesis generated applications. 
+I'm always happy to chat, so please reach out if you want to discuss things.
